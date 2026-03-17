@@ -1,50 +1,13 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "virtualMachines_WEB1_name": {
-            "defaultValue": "WEB1",
-            "type": "String"
-        },
-        "virtualMachines_WEB2_name": {
-            "defaultValue": "WEB2",
-            "type": "String"
-        },
-        "sshPublicKeys_WEB1_key_name": {
-            "defaultValue": "WEB1_key",
-            "type": "String"
-        },
-        "publicIPAddresses_WEB1_ip_name": {
-            "defaultValue": "WEB1-ip",
-            "type": "String"
-        },
-        "publicIPAddresses_WEB2_ip_name": {
-            "defaultValue": "WEB2-ip",
-            "type": "String"
-        },
-        "virtualNetworks_VNET_LAB1_name": {
-            "defaultValue": "VNET-LAB1",
-            "type": "String"
-        },
-        "networkInterfaces_web13_z2_name": {
-            "defaultValue": "web13_z2",
-            "type": "String"
-        },
-        "networkInterfaces_web14_z2_name": {
-            "defaultValue": "web14_z2",
-            "type": "String"
-        },
-        "networkSecurityGroups_NSG_WEB_name": {
-            "defaultValue": "NSG-WEB",
-            "type": "String"
-        }
-    },
+    "parameters": {},
     "variables": {},
     "resources": [
         {
             "type": "Microsoft.Compute/sshPublicKeys",
-            "apiVersion": "2024-11-01",
-            "name": "[parameters('sshPublicKeys_WEB1_key_name')]",
+            "apiVersion": "2025-04-01",
+            "name": "WEB1_key",
             "location": "canadacentral",
             "properties": {
                 "publicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCwbExINtke+PYg9/YXlIky78CGQVjI7UGHk3l/K0geyxbJQyPGK+BCQ8OOwTgaCA4I5StzMJDan2l/ARWQ7OrhD4XBjbfwxsRIydTUJnQzGF10ZR8cWHKfG64p+NlVV4if4IkMOd36mlNCdFCMnkmdax2yRJCe+o+vCb89HfEcpOki2Df0/FOPUUEPhGBloSiesxtvpAUZDpBKxhV5XogJ9GPAvdQbkCq+hsYXOYaNVZ4/r64P4ifZ6zEKWrIISZKeb6x0DzZO9ycj3XHtMKXHY8ehfok4cUykBYfHKvHauwebv7mr20DViVHziAyoSwnpwCZbdjWR7FcbXR4gL1fgDMAkFx3BvI9t2NY8u9Tl7CcN+oaoLXHxnuq9mnRR19PigCj05hVbiuBQC8WJZOWIu9tZ68/MQ3ZyES4BbL762U6PLcWTvDMGiAh7BTitjOY2VeMCCXn3sxd+b97TUvLwd7N4yzK+/mc5vXQ19XtcFFWY63HNRwCkSDhJwbkCl9E= generated-by-azure"
@@ -53,13 +16,13 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2024-07-01",
-            "name": "[parameters('networkSecurityGroups_NSG_WEB_name')]",
+            "name": "NSG-WEB",
             "location": "canadacentral",
             "properties": {
                 "securityRules": [
                     {
                         "name": "ALLOW-SSH",
-                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_NSG_WEB_name'), 'ALLOW-SSH')]",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', 'NSG-WEB', 'ALLOW-SSH')]",
                         "type": "Microsoft.Network/networkSecurityGroups/securityRules",
                         "properties": {
                             "protocol": "TCP",
@@ -78,7 +41,7 @@
                     },
                     {
                         "name": "ALLOW-HTTP",
-                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_NSG_WEB_name'), 'ALLOW-HTTP')]",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', 'NSG-WEB', 'ALLOW-HTTP')]",
                         "type": "Microsoft.Network/networkSecurityGroups/securityRules",
                         "properties": {
                             "protocol": "TCP",
@@ -101,7 +64,7 @@
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2024-07-01",
-            "name": "[parameters('publicIPAddresses_WEB1_ip_name')]",
+            "name": "LB_ip",
             "location": "canadacentral",
             "sku": {
                 "name": "Standard",
@@ -111,7 +74,7 @@
                 "2"
             ],
             "properties": {
-                "ipAddress": "4.204.10.16",
+                "ipAddress": "40.82.179.196",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -121,11 +84,10 @@
                 }
             }
         },
-
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2024-07-01",
-            "name": "[parameters('publicIPAddresses_WEB2_ip_name')]",
+            "name": "WEB1-ip",
             "location": "canadacentral",
             "sku": {
                 "name": "Standard",
@@ -135,7 +97,7 @@
                 "2"
             ],
             "properties": {
-                "ipAddress": "4.204.10.17",
+                "ipAddress": "4.248.144.89",
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -145,11 +107,33 @@
                 }
             }
         },
-
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2024-07-01",
+            "name": "WEB2-ip",
+            "location": "canadacentral",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "zones": [
+                "2"
+            ],
+            "properties": {
+                "ipAddress": "20.151.179.48",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": [],
+                "ddosSettings": {
+                    "protectionMode": "VirtualNetworkInherited"
+                }
+            }
+        },
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2024-07-01",
-            "name": "[parameters('virtualNetworks_VNET_LAB1_name')]",
+            "name": "VNET-LAB1",
             "location": "canadacentral",
             "properties": {
                 "addressSpace": {
@@ -165,7 +149,7 @@
                 "subnets": [
                     {
                         "name": "default",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNET_LAB1_name'), 'default')]",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'VNET-LAB1', 'default')]",
                         "properties": {
                             "addressPrefixes": [
                                 "10.0.0.0/24"
@@ -178,7 +162,7 @@
                     },
                     {
                         "name": "SUBNET-WEB",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNET_LAB1_name'), 'SUBNET-WEB')]",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'VNET-LAB1', 'SUBNET-WEB')]",
                         "properties": {
                             "addressPrefixes": [
                                 "10.0.1.0/24"
@@ -196,15 +180,18 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2024-11-01",
-            "name": "[parameters('virtualMachines_WEB1_name')]",
+            "apiVersion": "2025-04-01",
+            "name": "WEB1",
             "location": "canadacentral",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_web13_z2_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', 'web13_z2')]"
             ],
             "zones": [
                 "2"
             ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_D2s_v3"
@@ -221,19 +208,21 @@
                     },
                     "osDisk": {
                         "osType": "Linux",
-                        "name": "[concat(parameters('virtualMachines_WEB1_name'), '_disk1_49d87aa0a58543e4a7779ba492e7dc80')]",
+                        "name": "WEB1_disk1_49d87aa0a58543e4a7779ba492e7dc80",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Premium_LRS"
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', 'WEB1_disk1_49d87aa0a58543e4a7779ba492e7dc80')]"
                         },
                         "deleteOption": "Delete",
                         "diskSizeGB": 30
                     },
+                    "dataDisks": [],
                     "diskControllerType": "SCSI"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualMachines_WEB1_name')]",
+                    "computerName": "WEB1",
                     "adminUsername": "azureuser",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": true,
@@ -255,7 +244,8 @@
                         }
                     },
                     "secrets": [],
-                    "allowExtensionOperations": true
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
                 },
                 "securityProfile": {
                     "uefiSettings": {
@@ -267,7 +257,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_web13_z2_name'))]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'web13_z2')]",
                             "properties": {
                                 "deleteOption": "Detach"
                             }
@@ -281,18 +271,20 @@
                 }
             }
         },
-
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2024-11-01",
-            "name": "[parameters('virtualMachines_WEB2_name')]",
+            "apiVersion": "2025-04-01",
+            "name": "WEB2",
             "location": "canadacentral",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_web14_z2_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', 'web14_z2')]"
             ],
             "zones": [
                 "2"
             ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_D2s_v3"
@@ -309,19 +301,21 @@
                     },
                     "osDisk": {
                         "osType": "Linux",
-                        "name": "[concat(parameters('virtualMachines_WEB2_name'), '_disk1_49d87aa0a58543e4a7779ba492e7dc80')]",
+                        "name": "WEB2_disk1_49d87aa0a58543e4a7779ba492e7dc80",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
-                            "storageAccountType": "Premium_LRS"
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', 'WEB2_disk1_49d87aa0a58543e4a7779ba492e7dc80')]"
                         },
                         "deleteOption": "Delete",
                         "diskSizeGB": 30
                     },
+                    "dataDisks": [],
                     "diskControllerType": "SCSI"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualMachines_WEB2_name')]",
+                    "computerName": "WEB2",
                     "adminUsername": "azureuser",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": true,
@@ -343,7 +337,8 @@
                         }
                     },
                     "secrets": [],
-                    "allowExtensionOperations": true
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
                 },
                 "securityProfile": {
                     "uefiSettings": {
@@ -355,7 +350,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_web14_z2_name'))]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'web14_z2')]",
                             "properties": {
                                 "deleteOption": "Detach"
                             }
@@ -369,13 +364,92 @@
                 }
             }
         },
-        
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "apiVersion": "2024-07-01",
+            "name": "LAB2-LB",
+            "location": "canadacentral",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'LB_ip')]"
+            ],
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "front-lb",
+                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB'), '/frontendIPConfigurations/front-lb')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'LB_ip')]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "Lab2-back"
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "FrontToBack",
+                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB'), '/loadBalancingRules/FrontToBack')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB'), '/frontendIPConfigurations/front-lb')]"
+                            },
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "Tcp",
+                            "enableTcpReset": false,
+                            "loadDistribution": "Default",
+                            "disableOutboundSnat": true,
+                            "enableConnectionTracking": false,
+                            "backendAddressPool": {
+                                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', 'LAB2-LB', 'Lab2-back')]"
+                            },
+                            "backendAddressPools": [
+                                {
+                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', 'LAB2-LB', 'Lab2-back')]"
+                                }
+                            ],
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB'), '/probes/Check80')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "Check80",
+                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB'), '/probes/Check80')]",
+                        "properties": {
+                            "protocol": "Tcp",
+                            "port": 80,
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 1,
+                            "probeThreshold": 1,
+                            "noHealthyBackendsBehavior": "AllProbedDown"
+                        }
+                    }
+                ],
+                "inboundNatRules": [],
+                "outboundRules": [],
+                "inboundNatPools": []
+            }
+        },
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
             "apiVersion": "2024-07-01",
-            "name": "[concat(parameters('networkSecurityGroups_NSG_WEB_name'), '/ALLOW-HTTP')]",
+            "name": "NSG-WEB/ALLOW-HTTP",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB_name'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG-WEB')]"
             ],
             "properties": {
                 "protocol": "TCP",
@@ -395,9 +469,9 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
             "apiVersion": "2024-07-01",
-            "name": "[concat(parameters('networkSecurityGroups_NSG_WEB_name'), '/ALLOW-SSH')]",
+            "name": "NSG-WEB/ALLOW-SSH",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB_name'))]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG-WEB')]"
             ],
             "properties": {
                 "protocol": "TCP",
@@ -417,9 +491,9 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2024-07-01",
-            "name": "[concat(parameters('virtualNetworks_VNET_LAB1_name'), '/default')]",
+            "name": "VNET-LAB1/default",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNET_LAB1_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', 'VNET-LAB1')]"
             ],
             "properties": {
                 "addressPrefixes": [
@@ -433,9 +507,9 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2024-07-01",
-            "name": "[concat(parameters('virtualNetworks_VNET_LAB1_name'), '/SUBNET-WEB')]",
+            "name": "VNET-LAB1/SUBNET-WEB",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNET_LAB1_name'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', 'VNET-LAB1')]"
             ],
             "properties": {
                 "addressPrefixes": [
@@ -449,34 +523,37 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2024-07-01",
-            "name": "[parameters('networkInterfaces_web13_z2_name')]",
+            "name": "web13_z2",
             "location": "canadacentral",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB1_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNET_LAB1_name'), 'SUBNET-WEB')]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB_name'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'WEB1-ip')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'VNET-LAB1', 'SUBNET-WEB')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG-WEB')]",
+                "[resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB')]"
             ],
             "kind": "Regular",
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
-                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_web13_z2_name')), '/ipConfigurations/ipconfig1')]",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', 'web13_z2'), '/ipConfigurations/ipconfig1')]",
                         "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
                         "properties": {
                             "privateIPAddress": "10.0.1.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB1_ip_name'))]",
-                                "properties": {
-                                    "deleteOption": "Detach"
-                                }
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'WEB1-ip')]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNET_LAB1_name'), 'SUBNET-WEB')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'VNET-LAB1', 'SUBNET-WEB')]"
                             },
                             "primary": true,
-                            "privateIPAddressVersion": "IPv4"
+                            "privateIPAddressVersion": "IPv4",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', 'LAB2-LB', 'Lab2-back')]"
+                                }
+                            ]
                         }
                     }
                 ],
@@ -487,45 +564,48 @@
                 "enableIPForwarding": false,
                 "disableTcpStateTracking": false,
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB_name'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG-WEB')]"
                 },
                 "nicType": "Standard",
                 "auxiliaryMode": "None",
                 "auxiliarySku": "None"
             }
         },
-
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2024-07-01",
-            "name": "[parameters('networkInterfaces_web14_z2_name')]",
+            "name": "web14_z2",
             "location": "canadacentral",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB2_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNET_LAB1_name'), 'SUBNET-WEB')]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB_name'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'WEB2-ip')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'VNET-LAB1', 'SUBNET-WEB')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG-WEB')]",
+                "[resourceId('Microsoft.Network/loadBalancers', 'LAB2-LB')]"
+
             ],
             "kind": "Regular",
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig2",
-                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_web14_z2_name')), '/ipConfigurations/ipconfig1')]",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', 'web14_z2'), '/ipConfigurations/ipconfig2')]",
                         "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
                         "properties": {
                             "privateIPAddress": "10.0.1.5",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_WEB2_ip_name'))]",
-                                "properties": {
-                                    "deleteOption": "Detach"
-                                }
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'WEB2-ip')]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNET_LAB1_name'), 'SUBNET-WEB')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'VNET-LAB1', 'SUBNET-WEB')]"
                             },
                             "primary": true,
-                            "privateIPAddressVersion": "IPv4"
+                            "privateIPAddressVersion": "IPv4",
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', 'LAB2-LB', 'Lab2-back')]"
+                                }
+                            ]
                         }
                     }
                 ],
@@ -536,7 +616,7 @@
                 "enableIPForwarding": false,
                 "disableTcpStateTracking": false,
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_NSG_WEB_name'))]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'NSG-WEB')]"
                 },
                 "nicType": "Standard",
                 "auxiliaryMode": "None",
